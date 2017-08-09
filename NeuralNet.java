@@ -38,9 +38,11 @@ public class NeuralNet
 {
     public static void main(String args[])
     {
+        float threshold = 0.5f;
+
         //our input
         Input i1 = new Input(1, 1);
-        Input i2 = new Input(0, 1);
+        Input i2 = new Input(1, 1);
 
         //create neuron with the given bias
         Neuron neuron = new Neuron();
@@ -48,6 +50,9 @@ public class NeuralNet
         //calculate the output
         neuron.calc(i1, i2);
 
-        System.out.println("Result = " + neuron.output);
+        if (neuron.output >= threshold)
+            System.out.println("Accepted.");
+        else
+            System.out.println("Rejected.");
     }
 }
