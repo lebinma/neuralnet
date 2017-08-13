@@ -2,15 +2,20 @@ class Support
 {
     static double sigmoid(double a)
     {
-        return Math.exp(a);
+        return 1/(1 + Math.exp(-a));
+    }
+
+    static double derivative(double a)
+    {
+        return a*(1-a);
     }
 }
 
 class Input
 {
-    int a, b, c;
+    double a, b, c;
 
-    Input(int x, int y, int z)
+    Input(double x, double y, double z)
     {
         a = x;
         b = y;
@@ -20,9 +25,9 @@ class Input
 
 class Neuron
 {
-    float w1, w2, w3; //weights
+    double w1, w2, w3; //weights
 
-    Neuron(float a, float b, float c)
+    Neuron(double a, double b, double c)
     {
         w1 = a;
         w2 = b;
@@ -30,36 +35,61 @@ class Neuron
     }
 
     //return output
-    float test(Input input)
+    double test(Input input)
     {
-        output = (float) 
+        double sum = input.a*w1 + input.b*w2 + input.c*w3;
+        return Support.sigmoid(sum);
     }
 
-    void train(Input input[], int out[])
+    void train(Input input[], double out[])
     {
-        //train
+        double output, result, sum, error;
+
+        System.out.println("Weights before training = ");
+        System.out.println(w1);
+        System.out.println(w2);
+        System.out.println(w3);
+
+       for (int i=0; i<10000; i++)
+       {
+            for (int j=0; j<input.length; j++)
+            {
+                sum = input[j].a*w1 + input[j].b*w2 + input[j].c*w3;
+                result = Support.sigmoid(sum);
+                error = (double) out[j] - result;
+
+                w1 += error * input[j].a * Support.derivative(result);
+                w2 += error * input[j].b * Support.derivative(result);
+                w3 += error * input[j].c * Support.derivative(result);
+            }
+       }
+
+        System.out.println("\nWeights after training = ");
+        System.out.println(w1);
+        System.out.println(w2);
+        System.out.println(w3);
     }
 }
 
-public class NeuralNetwork
+public class NeuralNet
 {
     public static void main(String args[])
     {
         //initialize Neuron with random weights
-        Neuron neuron = new Neuron(0.5f, 0f, -0.2f);
+        Neuron neuron = new Neuron(0, 0, 0);
 
-        Input trainData[];
+        Input trainData[] = new Input[4];
         Input testData = new Input(1, 0, 0);
 
         trainData[0] = new Input(0, 0, 1);
         trainData[1] = new Input(1, 1, 1);
         trainData[2] = new Input(1, 0, 1);
-        trainData[2] = new Input(0, 0, 1);
+        trainData[3] = new Input(0, 0, 1);
 
-        int out[] = {0, 1, 1, 0};
+        double out[] = {0, 1, 0, 0};
 
-        neuron.train(testData, out);
-        float result = neuron.test(testData);
+        neuron.train(trainData, out);
+        double result = neuron.test(testData);
 
         System.out.println("\nResult = " + result);
     }
