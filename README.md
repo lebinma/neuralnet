@@ -1,2 +1,3 @@
 # Neural Network
-Simple neural network implementation
+Neural network implementation experiments
+
